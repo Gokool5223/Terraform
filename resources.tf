@@ -30,7 +30,7 @@ resource "aws_instance" "Server1-Application" {
     instance_type = "t2.micro"
     subnet_id = aws_subnet.public_subnet.id
     ami = var.ami
-    security_groups = [aws_security_group.default-sg.id]
+    security_groups = aws_security_group.default-sg.id
     key_name = ""
     tags {
          Name = "terraform-Server"
@@ -53,7 +53,7 @@ resource "aws_vpc" "vpc" {
 }
 /*==== Subnets ======*/
 /* Internet gateway for the public subnet */
-resource "aws_internet_gateway" "ig" {
+resource "aws_internet_gateway" "igw" {
   vpc_id = aws_vpc.vpc.id
   tags = {
     Name        = "igw"
@@ -62,14 +62,14 @@ resource "aws_internet_gateway" "ig" {
 }/* Elastic IP for NAT */
 resource "aws_eip" "nat_eip" {
   vpc        = true
-  depends_on = aws_internet_gateway.ig
+  depends_on = aws_internet_gateway.id
 }
 
 /* NAT */
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat_eip.id
   subnet_id     = aws_subnet.public_subnet.id
-  depends_on    = aws_internet_gateway.ig
+  depends_on    = aws_internet_gateway.id
   tags = {
     Name        = "nat"
     
