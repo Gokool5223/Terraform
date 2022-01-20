@@ -79,9 +79,9 @@ resource "aws_nat_gateway" "nat" {
 /* Public subnet */
 resource "aws_subnet" "public_subnet" {
   vpc_id                  = "${aws_vpc.vpc.id}"
-  count                   = var.public_subnets_cidr
-  cidr_block              = "${public_subnets_cidr}"
-  availability_zone       = "${availability_zones}"
+  
+  cidr_block              = var.public_subnets_cidr
+  availability_zone       = var.availability_zones
   map_public_ip_on_launch = true
   tags = {
     Name        = "public-subnet"
@@ -90,7 +90,7 @@ resource "aws_subnet" "public_subnet" {
 }
 
 resource "aws_subnet" "private_subnet" {
-  vpc_id                  = "${aws_vpc.vpc.id}"
+  vpc_id                  = [aws_vpc.vpc.id]
   cidr_block              = var.private_subnets_cidr
   availability_zone       = var.availability_zones
   map_public_ip_on_launch = false
@@ -148,7 +148,7 @@ resource "aws_security_group" "default-sg" {
     from_port = "0"
     to_port   = "0"
     protocol  = "-1"
-    cidr_blocks      = [aws_vpc.main.cidr_block]
+    cidr_blocks      = "0.0.0.0/0"
 
     
   }
@@ -157,7 +157,7 @@ resource "aws_security_group" "default-sg" {
     from_port = "0"
     to_port   = "0"
     protocol  = "-1"
-    cidr_blocks      = [aws_vpc.main.cidr_block]
+    cidr_blocks      = "0.0.0.0/0"
   }
   
  
