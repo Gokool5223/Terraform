@@ -1,7 +1,7 @@
 resource "aws_instance" "Server1-Jenkins" {
     count=1
     instance_type = "t2.micro"
-    ami = "${var.ami}"
+    ami = var.ami
     security_groups = [aws_security_group.default-sg.id]
     subnet_id = aws_subnet.private_subnet
     user_data = <<EOF
@@ -29,7 +29,7 @@ resource "aws_instance" "Server1-Application" {
     count=1
     instance_type = "t2.micro"
     subnet_id = aws_subnet.public_subnet.id
-    ami = "${var.ami}"
+    ami = var.ami
     security_groups = [aws_security_group.default-sg.id]
     key_name = ""
     tags {
@@ -44,7 +44,7 @@ resource "aws_instance" "Server1-Application" {
 
 
 resource "aws_vpc" "vpc" {
-  cidr_block           = "${var.vpc_cidr}"
+  cidr_block           = var.vpc_cidr
   
   tags = {
     Name        = "vpc"
@@ -79,7 +79,7 @@ resource "aws_nat_gateway" "nat" {
 /* Public subnet */
 resource "aws_subnet" "public_subnet" {
   vpc_id                  = "${aws_vpc.vpc.id}"
-  count                   = "${var.public_subnets_cidr}"
+  count                   = var.public_subnets_cidr
   cidr_block              = "${public_subnets_cidr}"
   availability_zone       = "${availability_zones}"
   map_public_ip_on_launch = true
@@ -91,8 +91,8 @@ resource "aws_subnet" "public_subnet" {
 
 resource "aws_subnet" "private_subnet" {
   vpc_id                  = "${aws_vpc.vpc.id}"
-  cidr_block              = "${var.private_subnets_cidr}"
-  availability_zone       = "${var.availability_zones}"
+  cidr_block              = var.private_subnets_cidr
+  availability_zone       = var.availability_zones
   map_public_ip_on_launch = false
   tags = {
     Name        = "private-subnet"
@@ -138,7 +138,7 @@ resource "aws_route_table_association" "private" {
   route_table_id = "${aws_route_table.private.id}"
 }
 /*==== VPC's Default Security Group ======*/
-resource "aws_security_group" "default" {
+resource "aws_security_group" "default-sg" {
   name        = "default-sg"
   description = "Default security group to allow inbound/outbound from the VPC"
   vpc_id      = "${aws_vpc.vpc.id}"
