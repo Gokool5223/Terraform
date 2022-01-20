@@ -1,0 +1,16 @@
+- name: App Deployment
+  hosts: all
+  
+
+  tasks:
+    - name: clone remote git repository
+      git:
+        repo: https://github.com/rishi154/helloworld
+        dest: /
+
+    - name: Run the Container
+      shell: docker run --name helloworld -itd gokul/helloworld
+
+   
+
+
