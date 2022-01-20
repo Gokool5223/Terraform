@@ -62,13 +62,14 @@ resource "aws_internet_gateway" "igw" {
 }/* Elastic IP for NAT */
 resource "aws_eip" "nat_eip" {
   vpc        = true
-  depends_on = aws_internet_gateway.igw.id
+  associate_with_private_ip = "10.0.1.50"
+  depends_on = [aws_internet_gateway.igw]
 }
 
 /* NAT */
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat_eip.id
-  subnet_id     = aws_subnet.public_subnet.id
+  subnet_id     = [aws_subnet.public_subnet.id]
   depends_on    = aws_internet_gateway.igw.id
   tags = {
     Name        = "nat"
@@ -141,7 +142,7 @@ resource "aws_route_table_association" "private" {
 resource "aws_security_group" "default-sg" {
   name        = "default-sg"
   description = "Default security group to allow inbound/outbound from the VPC"
-  vpc_id      = aws_vpc.vpc.id
+  vpc_id      = [aws_vpc.vpc.id]
   depends_on  = aws_vpc.vpc.id
   
   ingress {
