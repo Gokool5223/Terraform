@@ -2,7 +2,7 @@ resource "aws_security_group" "terraform" {
 
     name = "Terraform Security"
     description = "Allow Traffic"
-    vpc_id = aws_vpc.terra.id
+    vpc_id = aws_vpc.main.id
 
     ingress {
         from_port = 22
