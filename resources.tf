@@ -143,33 +143,27 @@ resource "aws_security_group" "default" {
   description = "Default security group to allow inbound/outbound from the VPC"
   vpc_id      = "${aws_vpc.vpc.id}"
   depends_on  = [aws_vpc.vpc]
+  
   ingress {
-    from_port = "23"
-    to_port   = "23"
-    protocol  = "tcp"
-    self      = true
+    from_port = "0"
+    to_port   = "0"
+    protocol  = "-1"
+    cidr_blocks      = [aws_vpc.main.cidr_block]
+
+    
   }
   
   egress {
     from_port = "0"
     to_port   = "0"
     protocol  = "-1"
-    self      = "true"
+    cidr_blocks      = [aws_vpc.main.cidr_block]
   }
   
+ 
 }
-ingress {
-    from_port = "80"
-    to_port   = "80"
-    protocol  = "http"
-    self      = true
-  }
+
   
-ingress {
-    from_port = "8080"
-    to_port   = "8080"
-    protocol  = "http"
-    self      = true
-  }
+
   
  
