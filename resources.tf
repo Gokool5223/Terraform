@@ -69,7 +69,7 @@ resource "aws_eip" "nat_eip" {
 /* NAT */
 resource "aws_nat_gateway" "nat" {
   allocation_id = aws_eip.nat_eip.id
-  subnet_id     = ["aws_subnet.public_subnet.id"]
+  subnet_id     = [aws_subnet.public_subnet.id]
   depends_on    = [aws_internet_gateway.igw]
   tags = {
     Name        = "nat"
@@ -120,7 +120,7 @@ resource "aws_route_table" "public" {
 resource "aws_route" "public_internet_gateway" {
   route_table_id         = "${aws_route_table.public.id}"
   destination_cidr_block = "0.0.0.0/0"
-  gateway_id             = [aws_internet_gateway.ig]
+  gateway_id             = [aws_internet_gateway.igw.id]
 }
 resource "aws_route" "private_nat_gateway" {
   route_table_id         = "${aws_route_table.private.id}"
@@ -142,7 +142,7 @@ resource "aws_route_table_association" "private" {
 resource "aws_security_group" "default-sg" {
   name        = "default-sg"
   description = "Default security group to allow inbound/outbound from the VPC"
-  vpc_id      = ["aws_vpc.vpc.id"]
+  //vpc_id      = aws_vpc.vpc.id
   //depends_on  = [aws_vpc.vpc.id]
   
   ingress {
